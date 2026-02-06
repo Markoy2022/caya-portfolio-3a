@@ -1,61 +1,45 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Suspense } from 'react';
 
-export default async function ProfilePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default function ProfilePage({ params }: { params: { slug: string[] } }) {
+  const { slug } = params;
 
-  // As if Database Response
-  const userDb = [
-    {
-      id: "jameboy",
-      name: "Jameboy Escartin",
-      section: "BSIT - 3A",
-      email: "escartinjameboy@gmail.com",
-      hobbies: ["Chess", "Guitar", "Hobby 3"]
-    }
-  ]
+  const userDb = {
+    id: "John Mark",
+    name: "John Mark Caya",
+    section: "BSIT - 3A",
+    email: "Caya222@gmail.com",
+    hobbies: ["Eabab", "MILF", "Ghosto Kita"],
+  };
 
-  for (const currentSlug of slug) {
-    if (currentSlug === "hobbies") {
-      return (
-        <div className="border p-4 mb-4 rounded-md">
-          <h1>Hobby Page</h1>
-          {userDb[0].hobbies.map((hobby) => (
-            <ul key={hobby}>
-              <li>{hobby}</li>
-            </ul>
-          ))}
-        </div>
-      )
-    }
-  }
-
-  // Validation
-  const checkValidUser: Boolean = userDb[0].id === slug[0];
-  console.log(checkValidUser)
-  // If not Valid User
-  if (!checkValidUser) {
+  // /profile/John Mark/hobbies
+  if (slug[1] === "hobbies") {
     return (
-      <div className="border p-4 mb-4 rounded-md">
-        Not Found User
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-4">Hobbies</h1>
+        <ul className="list-disc pl-6">
+          {userDb.hobbies.map((hobby) => (
+            <li key={hobby}>{hobby}</li>
+          ))}
+        </ul>
       </div>
-    )
+    );
   }
 
-  // If Valid User -> Render actual page
+  // validation
+  if (slug[0] !== userDb.id) {
+    return <div className="p-6">User not found</div>;
+  }
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="container mx-auto p-6">
-        <div key={userDb[0].id} className="border p-4 mb-4 rounded-md">
-          <h1>{userDb[0].name}</h1>
-          <h2>{userDb[0].section}</h2>
-          <p className='mb-4'>Email: {userDb[0].email}</p>
-          <Link href="./jameboy/hobbies">
-            <Button>View Hobbies</Button>
-          </Link>
-        </div>
-      </div>
-    </Suspense>
-  )
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold">{userDb.name}</h1>
+      <h2 className="text-muted-foreground">{userDb.section}</h2>
+      <p className="mb-4">Email: {userDb.email}</p>
+
+      <Link href={`/profile/${userDb.id}/hobbies`}>
+        <Button>View Hobbies</Button>
+      </Link>
+    </div>
+  );
 }
